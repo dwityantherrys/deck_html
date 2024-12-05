@@ -1,0 +1,2 @@
+[07-Jan-2023 23:24:45 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.1.0". You are running 8.0.25. in /home/ruangwe2/demoerp.web.id/vendor/composer/platform_check.php on line 24
+[07-Jan-2023 23:40:33 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.1.0". You are running 8.0.25. in /home/ruangwe2/demoerp.web.id/vendor/composer/platform_check.php on line 24
