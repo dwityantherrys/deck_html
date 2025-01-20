@@ -176,17 +176,25 @@ class JobOrderController extends Controller
       
         if ($request->ajax()) {
 
-            return Datatables::of($this->model::with(['job_order_details', 'pic']))
-                        ->addColumn('total_item', function (JobOrder $jo) { 
-                            return $jo->job_order_details->count(); 
-                        })
-                        ->editColumn('status', function (JobOrder $jo) use ($joStatus) { 
-                            return '<small class="label bg-'. $joStatus[$jo->status]['label-color'] . '">' . $joStatus[$jo->status]['label'] . '</small>'; 
-                        })
-                        ->editColumn('date', function (JobOrder $jo) { 
-                            $roleUser = request()->user()->role->name;
-                            $isSuperAdmin = $roleUser === 'super_admin';
-
+            return Datatables::of(
+                        $this->model::with(['job_order_details', 'pic'])
+                                    ->orderBy('date', 'desc') // Tambahkan orderBy di sini
+                    )
+                    ->addColumn('total_item', function (JobOrder $jo) { 
+                        return $jo->job_order_details->count(); 
+                    })
+                    ->editColumn('status', function (JobOrder $jo) use ($joStatus) { 
+                        return '<small class="label bg-'. $joStatus[$jo->status]['label-color'] . '">' . $joStatus[$jo->status]['label'] . '</small>'; 
+                    })
+                    ->editColumn('date', function (JobOrder $jo) { 
+                        $roleUser = request()->user()->role->name;
+                        $isSuperAdmin = $roleUser === 'super_admin';
+                    
+                        if ($jo->status == $this->model::STATUS_FINISH) {
+                            // Jika status adalah finish (3), tampilkan teks tanpa hyperlink
+                            return '<span>' . $jo->date->format('m/d/Y') . ' - ' . $jo->id . '</span>';
+                        } else {
+                            // Jika status bukan finish (3), tampilkan hyperlink
                             return '<a class="has-ajax-form text-red" href="" 
                                 data-toggle="modal" 
                                 data-target="#ajax-form"
@@ -194,14 +202,17 @@ class JobOrderController extends Controller
                                 data-load="'. url($this->route . '/' . $jo->id . '/ajax-form') . '"
                                 data-is-superadmin="'. $isSuperAdmin . '">
                                 ' . $jo->date->format('m/d/Y') . ' - ' . $jo->id . '
-                                </a>'; 
-                        })
-                        ->addColumn('action', function (JobOrder $jo) { 
-                            return \TransAction::table($this->route, $jo, null, $jo->log_print);
-                        })
-                        ->rawColumns(['date', 'sales_id', 'status', 'action'])          
-                        ->make(true);
+                                </a>';
+                        }
+                    })
+                    
+                    ->addColumn('action', function (JobOrder $jo) { 
+                        return \TransAction::table($this->route, $jo, null, $jo->log_print);
+                    })
+                    ->rawColumns(['date', 'sales_id', 'status', 'action'])          
+                    ->make(true);
         }
+        
 
         $this->params['model'] = $this->model;
         $this->params['datatable'] = $this->datatablesBuilder
@@ -375,102 +386,98 @@ class JobOrderController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
+{
+    $redirectOnSuccess = $this->route;
+    $keepJoDetails = [];
+    $validator = $this->_validate($request->all());
+    
+    if($validator->fails())
     {
-        $redirectOnSuccess = $this->route;
-        $keepJoDetails = [];
-        $validator = $this->_validate($request->all());
-        
-        if($validator->fails())
-        {
-            return redirect()
+        return redirect()
             ->back()
             ->withErrors($validator)
             ->withInput();
-        }
-
-        try {
-            DB::beginTransaction();
-            $submitAction = $request->submit;
-            $joDetails = $request->job_order_details;
-
-            $params = $request->all();
-            $params['date'] = date('Y-m-d', strtotime($request->date));
-            $params['status'] = $this->model::STATUS_PENDING;
-
-            if(!empty($request->due_date)) $params['due_date'] = date('Y-m-d', strtotime($request->due_date));
-            
-            unset(
-                $params['id'],
-                $params['submit'], 
-                $params['_token'], 
-                $params['order_details'],
-                $params['job_order_details']
-            );
-
-            $jo = $this->model->where('id', $id)->first();
-            $jo->update($params);
-
-            if(!empty($joDetails) && count($joDetails) > 0) {
-                foreach ($joDetails as $key => $joDetail) {
-                    $id = $joDetail['id'];
-
-                    unset($joDetail['id']);
-
-                    $joDetail['status'] = $this->model::STATUS_PENDING;
-                    $joDetail['quantity'] = str_replace(',', '', $joDetail['quantity']);
-                    $joDetail['balance'] = str_replace(',', '', $joDetail['quantity']);
-                    $joDetail['balance_issued'] = str_replace(',', '', $joDetail['quantity']);
-                    $joDetail['is_custom_length'] = ($joDetail['is_custom_length'] == 'true' || $joDetail['is_custom_length'] == '1') ? 1 : 0;
-
-                    $currentJoDetail = $jo->job_order_details()->where('id', $id)->first();
-
-                    if(!empty($currentJoDetail)) {
-                        $currentJoDetail->update($joDetail);
-                        $keepJoDetails[] = $currentJoDetail->id;
-                        continue;
-                    }
-
-                    $newJoDetail = $jo->job_order_details()->create($joDetail);
-                    $keepJoDetails[] = $newJoDetail->id;
-                }
-
-                /**
-                 * untuk item yang gk ada di request,
-                 * update status order jadi cancel (kalau submit= save_print, karena berikutnya 
-                 * tidak mungkin di update lagi)
-                 * update status order jadi pending (kalau submit= save, karena ada kemungkinan di update lagi)
-                 *   */
-                $jo->job_order_details()->whereNotIn('id', $keepJoDetails)->update([
-                    'status' => ($submitAction == 'save_print') ? $this->model::STATUS_CANCEL : $this->model::STATUS_PENDING
-                ]);
-            }
-
-            if($submitAction == 'save_print') {
-                $redirectOnSuccess .= "?print=" .$jo->id;
-            }
-            
-            DB::commit();
-
-            $request->session()->flash('notif', [
-                'code' => 'success',
-                'message' => str_replace(".", " ", $this->routeView) . ' success ' . __FUNCTION__ . 'd',
-            ]);
-            
-            return redirect($redirectOnSuccess);
-
-        } catch (\Throwable $th) {
-            DB::rollback();
-
-            $request->session()->flash('notif', [
-                'code' => 'failed ' . __FUNCTION__ . 'd',
-                'message' => str_replace(".", " ", $this->routeView) . ' : ' . $th,
-            ]);
-
-            return redirect()
-                ->back()
-                ->withInput();
-        }
     }
+
+    try {
+        DB::beginTransaction();
+        $submitAction = $request->submit;
+        $joDetails = $request->job_order_details;
+
+        $params = $request->all();
+        $params['date'] = date('Y-m-d', strtotime($request->date));
+        $params['status'] = $this->model::STATUS_PENDING;
+
+        if (!empty($request->due_date)) {
+            $params['due_date'] = date('Y-m-d', strtotime($request->due_date));
+        }
+
+        unset($params['id'], $params['submit'], $params['_token'], $params['order_details'], $params['job_order_details']);
+
+        $jo = $this->model->where('id', $id)->first();
+        $jo->update($params);
+
+        if (!empty($joDetails) && count($joDetails) > 0) {
+            foreach ($joDetails as $key => $joDetail) {
+                $id = $joDetail['id'] ?? null;
+        
+                // $joDetail['quantity'] = str_replace(',', '', $joDetail['quantity']);
+                $joDetail['price'] = str_replace(',', '', $joDetail['price']);
+                $joDetail['quantity'] = str_replace(',', '', $joDetail['quantity']);
+                $joDetail['amount'] = str_replace(',', '', $joDetail['amount']);
+                
+                // $joDetail['balance'] = str_replace(',', '', $joDetail['quantity']);
+                // $joDetail['balance_issued'] = str_replace(',', '', $joDetail['quantity']);
+                // $joDetail['is_custom_length'] = isset($joDetail['is_custom_length']) 
+                //     ? (($joDetail['is_custom_length'] == 'true' || $joDetail['is_custom_length'] == '1') ? 1 : 0) 
+                //     : 0;
+        
+                unset($joDetail['id']); // Buang ID sebelum update atau create
+        
+                $currentJoDetail = $jo->job_order_details()->where('id', $id)->first();
+        
+                if (!empty($currentJoDetail)) {
+                    $currentJoDetail->update($joDetail);
+                    $keepJoDetails[] = $currentJoDetail->id;
+                    continue;
+                }
+        
+                $newJoDetail = $jo->job_order_details()->create($joDetail);
+                $keepJoDetails[] = $newJoDetail->id;
+            }
+        
+            // Hapus detail yang tidak ada di permintaan
+            $jo->job_order_details()->whereNotIn('id', $keepJoDetails)->delete();
+        }
+        
+
+        if ($submitAction == 'save_print') {
+            $redirectOnSuccess .= "?print=" . $jo->id;
+        }
+
+        DB::commit();
+
+        $request->session()->flash('notif', [
+            'code' => 'success',
+            'message' => str_replace(".", " ", $this->routeView) . ' success ' . __FUNCTION__ . 'd',
+        ]);
+
+        return redirect($redirectOnSuccess);
+
+    } catch (\Throwable $th) {
+        DB::rollback();
+
+        $request->session()->flash('notif', [
+            'code' => 'failed ' . __FUNCTION__ . 'd',
+            'message' => str_replace(".", " ", $this->routeView) . ' : ' . $th->getMessage(),
+        ]);
+
+        return redirect()
+            ->back()
+            ->withInput();
+    }
+}
+
 
     /**
      * Remove the specified resource from storage.
@@ -496,58 +503,53 @@ class JobOrderController extends Controller
     }
 
     public function print(Request $request, $id)
-    {
-        $roleUser = request()->user()->role->name;
-        $isSuperAdmin = $roleUser === 'super_admin';
+{
+    $roleUser = request()->user()->role->name;
+    $isSuperAdmin = $roleUser === 'super_admin';
 
-        try {
-            DB::beginTransaction();
-            $jo = $this->model->where('id', $id)->with([
-                'job_order_details','job_order_details.item_material','pic', 'vendor.profile' , 'vendor.profile.default_address',
-                'vendor.profile.default_address.region_city', 'vendor.profile.default_address.region_district'])->first();
-            $params['model'] = $jo;
+    try {
+        DB::beginTransaction();
 
-            
-            // if(!empty($jo->log_print)) {
-            //     if($isSuperAdmin) return \PrintFile::original($this->routeView . '.pdf', $params, 'Job-Order-' . $jo->number);
-            //     //print with watermark
-            //     return \PrintFile::copy($this->routeView . '.pdf', $params, 'Job-Order-' . $jo->number);
-            // }
-            
-            //print without watermark
-            // LogPrint::create([
-            //     'transaction_code' => \Config::get('transactions.job_order.code'),
-            //     'transaction_number' => $jo->number,
-            //     'employee_id' => Auth()->user()->id,
-            //     'date' => now()
-            // ]);
+        $jo = $this->model->where('id', $id)->with([
+            'job_order_details', 
+            'job_order_details.item_material', 
+            'pic', 
+            'vendor.profile', 
+            'vendor.profile.default_address',
+            'vendor.profile.default_address.region_city', 
+            'vendor.profile.default_address.region_district'
+        ])->first();
 
+        $params['model'] = $jo;
+
+        // Jika status pekerjaan bukan finish (3), maka lakukan perubahan status
+        if ($jo->status != $this->model::STATUS_FINISH) {
             $jo->job_order_details()
                 ->where(['status' => $this->model::STATUS_PENDING])
                 ->update(['status' => $this->model::STATUS_PROCESS]);
             $jo->status = $this->model::STATUS_PROCESS;
             $jo->save();
-
-            DB::commit();
-
-            // return json_encode($params);
-        
-            // return view($this->routeView . '.pdf', $params);
-
-            return \PrintFile::original($this->routeView . '.pdf', $params, 'Project-' . $jo->number);
-        } catch (\Throwable $th) {
-            DB::rollback();
-               
-            $request->session()->flash('notif', [
-                'code' => 'failed ' . __FUNCTION__ . 'd',
-                'message' => str_replace(".", " ", $this->routeView) . ' : ' . $th->getMessage(),
-            ]);
-
-            return redirect()
-                ->back()
-                ->withInput();
         }
+
+        DB::commit();
+
+        // Kembalikan file PDF untuk dicetak
+        return \PrintFile::original($this->routeView . '.pdf', $params, 'Project-' . $jo->number);
+
+    } catch (\Throwable $th) {
+        DB::rollback();
+
+        $request->session()->flash('notif', [
+            'code' => 'failed ' . __FUNCTION__ . 'd',
+            'message' => str_replace(".", " ", $this->routeView) . ' : ' . $th->getMessage(),
+        ]);
+
+        return redirect()
+            ->back()
+            ->withInput();
     }
+}
+
 
     private function _validate ($request)
     {

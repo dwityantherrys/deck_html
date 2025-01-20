@@ -288,8 +288,8 @@ return [
       ],
     ],
     [
-      'text' => 'Customer / Vendor',
-      'model' => Str::slug('Customer / Vendor', '_'),
+      'text' => 'Vendor',
+      'model' => Str::slug('Vendor', '_'),
       'can' => 'access-menu',
       'icon' => 'address-book',
       'submenu' => [
@@ -301,7 +301,7 @@ return [
           'icon' => 'building'
         ],
         [
-          'text' => 'Customer / Vendor',
+          'text' => 'Vendor',
           'url'  => 'master/customer',
           'model'  => 'master/customer',
           'can' => 'access-menu',

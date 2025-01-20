@@ -71,9 +71,10 @@ Surat Perintah Kerja {{ $model->number }}
                     // Determine VAT label and calculation based on tax_type
                     if ($model->tax_type == 1) {
                         $vatLabel = 'VAT 11%';
-                    } elseif ($model->tax_type == 2) {
-                        $vatLabel = 'VAT 11% (Included)';
                     }
+                    //  elseif ($model->tax_type == 2) {
+                    //     $vatLabel = 'VAT 11% (Included)';
+                    // }
                 ?>
                 {{ $vatLabel }}
             </td>
@@ -103,23 +104,28 @@ Surat Perintah Kerja {{ $model->number }}
     </tfoot>
 </table>
 
-<table class="table-signment">
+<table class="table-signment" border = "0">
     <tr>
-        <td width="75%">
+        <td width="60%">
             <span class="label">Catatan:</span>
-            <div style="border: 1px solid black; width: 75%; height: 100px">
+            <div style="border: 1px solid black; width: 80%; height: 100px">
             {{ $model->remark }}
             </div>
         </td>
-        <td valign="top">tertanda,</td>
+        <td valign="top"  colspan = "3"  width="40%" >tertanda,</td>
     </tr>
     <tr>
         <td></td>
+        <td>{{ $model->pic->name }}</td>
+        <td width = "30px"></td>
         <td>{{ $model->pic->name }}</td>
     </tr>
     <tr>
         <td></td>
         <td>PIC Role</td>
+        <td width = "30px"></td>
+        <td>Departement</td>
     </tr>
+    
 </table>
 @endsection

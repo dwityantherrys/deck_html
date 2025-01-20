@@ -52,7 +52,10 @@
             <td>{{ $item->purchase_date }}</td>
             <td>{{ $item->quantity }}</td>
             <td>{{ $item->unit->name }}</td>
-            <td>{{ $item->type }}</td>
+            <td>
+    {{ $item->type === 'service' ? 'Surat Perintah Kerja' : $item->type }}
+</td>
+
             <td>
               @if($item->jenis_pajak == '0')
               <small class="label bg-green">None</small>

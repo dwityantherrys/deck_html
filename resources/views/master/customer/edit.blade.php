@@ -1,9 +1,9 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit Costumer / Vendor')
+@section('title', 'Edit Vendor')
 
 @section('content_header')
-<h1> Edit Costumer / Vendor:  {{ $model->name }}</h1>
+<h1> Edit Vendor:  {{ $model->name }}</h1>
 @stop
 
 @section('content')

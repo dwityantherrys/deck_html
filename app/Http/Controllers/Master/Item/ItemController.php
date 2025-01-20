@@ -16,6 +16,7 @@ class ItemController extends Controller
     private $routeView = 'master.item.item';
     private $routeUpload = 'img/item';
     private $params = [];
+    private $model;
 
     public function __construct ()
     {
@@ -39,18 +40,21 @@ class ItemController extends Controller
       }
 
       try {
-        $results = $this->model::whereRaw($where)
-                   ->get()
-                   ->makeHidden(['created_at', 'updated_at']);
+    $results = $this->model::whereRaw($where)
+        ->get()
+        ->makeHidden(['created_at', 'updated_at']);
 
-        foreach ($results as $key => $value) {
-            $value->name = $value->name;
-        }
+    // Jika tidak ada perubahan yang diperlukan, cukup lewati operasi berikutnya
+    foreach ($results as $key => $value) {
+        // Misalnya, mengubah ke huruf besar
+        $value->name = strtoupper($value->name);
+    }
 
-        $response['results'] = $results;
-      } catch (\Exception $e) {
-        return response(['message' => $e->getMessage()], 500);
-      }
+    $response['results'] = $results;
+} catch (\Exception $e) {
+    return response(['message' => $e->getMessage()], 500);
+}
+
 
       return response()->json($response, 200);
     }
@@ -63,33 +67,35 @@ class ItemController extends Controller
     }
 
     public function searchSparepart(Request $request)
-    {
-        $where = "1=1";
-        $response = [];
+{
+    $where = "1=1";
+    $response = [];
 
-        if ($request->searchKey) {
-            $where .= " and name like '%{$request->searchKey}%'";
-        }
-
-        // Tambahkan filter by type 'sparepart'
-        $where .= " and type = 'sparepart'";
-
-        try {
-            $results = $this->model::whereRaw($where)
-                    ->get()
-                    ->makeHidden(['created_at', 'updated_at']);
-
-            foreach ($results as $key => $value) {
-                $value->name = $value->name;
-            }
-
-            $response['results'] = $results;
-        } catch (\Exception $e) {
-            return response(['message' => $e->getMessage()], 500);
-        }
-
-        return response()->json($response, 200);
+    if ($request->searchKey) {
+        $where .= " and name like '%{$request->searchKey}%'";
     }
+
+    // Tambahkan filter by type 'sparepart'
+    $where .= " and type = 'sparepart'";
+
+    try {
+        $results = $this->model::whereRaw($where)
+                ->get()
+                ->makeHidden(['created_at', 'updated_at']);
+
+        // Jika tidak ada modifikasi, hapus logika ini
+        foreach ($results as $key => $value) {
+            // Contoh: Tambahkan transformasi jika diperlukan
+            $value->name = strtoupper($value->name);
+        }
+
+        $response['results'] = $results;
+    } catch (\Exception $e) {
+        return response(['message' => $e->getMessage()], 500);
+    }
+
+    return response()->json($response, 200);
+}
 
 
     public function searchByIdSparepart($name)
@@ -104,32 +110,35 @@ class ItemController extends Controller
 
 
     public function searchService(Request $request)
-    {
-      $where = "1=1";
-      $response = [];
+{
+    $where = "1=1";
+    $response = [];
 
-      if ($request->searchKey) {
+    if ($request->searchKey) {
         $where .= " and name like '%{$request->searchKey}%'";
-      }
+    }
 
-      $where .= " and type = 'service'";
+    $where .= " and type = 'service'";
+    
 
-      try {
+    try {
         $results = $this->model::whereRaw($where)
                    ->get()
                    ->makeHidden(['created_at', 'updated_at']);
 
+        // Tambahkan modifikasi jika diperlukan, jika tidak hapus blok ini
         foreach ($results as $key => $value) {
-            $value->name = $value->name;
+            // Contoh modifikasi: ubah menjadi huruf besar
+            $value->name = strtoupper($value->name);
         }
 
         $response['results'] = $results;
-      } catch (\Exception $e) {
+    } catch (\Exception $e) {
         return response(['message' => $e->getMessage()], 500);
-      }
-
-      return response()->json($response, 200);
     }
+
+    return response()->json($response, 200);
+}
 
     public function searchByIdService($name)
     {

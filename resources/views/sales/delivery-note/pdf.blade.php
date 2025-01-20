@@ -54,9 +54,11 @@ Berita Acara Perbaikan {{ $model->number }}
 
 <table class="table-signment">
     <tr>
-        <td width="75%">
+    <td width="75%">
             <span class="label">Catatan:</span>
-            <div style="border: 1px solid black; width: 75%; height: 100px"></div>
+            <div style="border: 1px solid black; width: 75%; height: 100px">
+            {{ $model->remark }}
+            </div>
         </td>
         <td valign="top">tertanda,</td>
     </tr>

@@ -128,12 +128,12 @@ class DeliveryNoteController extends Controller
     */
     public function index(Request $request)
     {
-      $deliveryStatus = [
-        $this->model::DELIVERY_PENDING => ['label' => 'pending', 'label-color' => 'yellow'],
-        $this->model::DELIVERY_PROCESS => ['label' => 'process', 'label-color' => 'blue'],
-        $this->model::DELIVERY_FINISH => ['label' => 'finish', 'label-color' => 'green'],
-        $this->model::DELIVERY_RETUR => ['label' => 'retur', 'label-color' => 'red'],
-      ];
+      // $deliveryStatus = [
+      //   $this->model::DELIVERY_PENDING => ['label' => 'pending', 'label-color' => 'yellow'],
+      //   $this->model::DELIVERY_PROCESS => ['label' => 'process', 'label-color' => 'blue'],
+      //   $this->model::DELIVERY_FINISH => ['label' => 'finish', 'label-color' => 'green'],
+      //   $this->model::DELIVERY_RETUR => ['label' => 'retur', 'label-color' => 'red'],
+      // ];
 
 
       if ($request->ajax()) {
@@ -144,9 +144,9 @@ class DeliveryNoteController extends Controller
         ->whereHas('delivery_note_details');
 
         return Datatables::of($deliveryNotes)
-        ->editColumn('status', function (DeliveryNote $shipping) use ($deliveryStatus) {
-          return '<small class="label bg-'. $deliveryStatus[$shipping->status]['label-color'] . '">' . $deliveryStatus[$shipping->status]['label'] . '</small>';
-        })
+        // ->editColumn('status', function (DeliveryNote $shipping) use ($deliveryStatus) {
+        //   return '<small class="label bg-'. $deliveryStatus[$shipping->status]['label-color'] . '">' . $deliveryStatus[$shipping->status]['label'] . '</small>';
+        // })
         ->editColumn('date', function (DeliveryNote $shipping) {
           return '<a class="has-ajax-form text-red" href=""
           data-toggle="modal"
@@ -159,22 +159,22 @@ class DeliveryNoteController extends Controller
         ->addColumn('action', function (DeliveryNote $shipping) {
           $actionFinish = '';
 
-          if(
-            ($shipping->status == $shipping::DELIVERY_PROCESS) &&
-            (!empty($shipping->sales_invoice) && ($shipping->sales_invoice->status == $shipping->sales_invoice::PAID_OFF))
-          ) {
-            $actionFinish = '<button
-            class="confirmation-delivered btn btn-default text-green"
-            style="margin-top: 10px; display: block"
-            data-target="' . url($this->route . '/' . $shipping->id . '/finish') . '"
-            data-token="' . csrf_token() . '">
-            <i class="fa fa-check-circle-o"></i> Finish
-            </button>';
-          }
+          // if(
+          //   ($shipping->status == $shipping::DELIVERY_PROCESS) //&&
+          //   //(!empty($shipping->sales_invoice) && ($shipping->sales_invoice->status == $shipping->sales_invoice::PAID_OFF))
+          // ) {
+          //   $actionFinish = '<button
+          //   class="confirmation-delivered btn btn-default text-green"
+          //   style="margin-top: 10px; display: block"
+          //   data-target="' . url($this->route . '/' . $shipping->id . '/finish') . '"
+          //   data-token="' . csrf_token() . '">
+          //   <i class="fa fa-check-circle-o"></i> Finish
+          //   </button>';
+          // }
 
           return \TransAction::table($this->route, $shipping, null, $shipping->log_print) . $actionFinish;
         })
-        ->rawColumns(['date', 'status', 'order_number', 'shipping_method_id', 'action'])
+        ->rawColumns(['date', 'order_number', 'shipping_method_id', 'action'])
         ->make(true);
       }
 
@@ -183,7 +183,7 @@ class DeliveryNoteController extends Controller
       ->addColumn([ 'data' => 'date', 'name' => 'date', 'title' => 'Date-No' ])
       ->addColumn([ 'data' => 'number', 'name' => 'number', 'title' => 'Delivery Note No' ])
       ->addColumn([ 'data' => 'job_order.number', 'name' => 'job_order.number', 'title' => 'SPK No' ])
-      ->addColumn([ 'data' => 'status', 'name' => 'status', 'title' => 'BAP Status' ])
+      // ->addColumn([ 'data' => 'status', 'name' => 'status', 'title' => 'BAP Status' ])
       ->addColumn([ 'data' => 'action', 'name' => 'action', 'title' => 'Action' ])
       ->parameters([
         'initComplete' => 'function() {
@@ -330,9 +330,9 @@ class DeliveryNoteController extends Controller
             $q->where("name", "like", "%$request->filter_customer%");
           });
         }
-        if($request->filled("filter_status")) {
-          $deliveryNotes = $deliveryNotes->where("status", $request->filter_status);
-        }
+        // if($request->filled("filter_status")) {
+        //   $deliveryNotes = $deliveryNotes->where("status", $request->filter_status);
+        // }
         if($request->filled("filter_method")) {
           $deliveryNotes = $deliveryNotes->where("shipping_method_id", $request->filter_method);
         }
@@ -341,9 +341,9 @@ class DeliveryNoteController extends Controller
         ->editColumn('total_price', function (DeliveryNote $shipping) {
           return \Rupiah::format($shipping->shipping_instruction->sales->total_price);
         })
-        ->editColumn('status', function (DeliveryNote $shipping) use ($deliveryStatus) {
-          return '<small class="label bg-'. $deliveryStatus[$shipping->status]['label-color'] . '">' . $deliveryStatus[$shipping->status]['label'] . '</small>';
-        })
+        // ->editColumn('status', function (DeliveryNote $shipping) use ($deliveryStatus) {
+        //   return '<small class="label bg-'. $deliveryStatus[$shipping->status]['label-color'] . '">' . $deliveryStatus[$shipping->status]['label'] . '</small>';
+        // })
         ->editColumn('shipping_method_id', function (DeliveryNote $shipping) use ($pickupMethods) {
           return '<small class="label bg-'. $pickupMethods[$shipping->shipping_method_id]['label-color'] . '">'
           . $pickupMethods[$shipping->shipping_method_id]['label'] .
@@ -365,24 +365,24 @@ class DeliveryNoteController extends Controller
           ' . $shipping->shipping_instruction->number . '
           </a>';
         })
-        ->addColumn('action', function (DeliveryNote $shipping) {
-          $actionFinish = '';
+        // ->addColumn('action', function (DeliveryNote $shipping) {
+        //   $actionFinish = '';
 
-          if(
-            ($shipping->status == $shipping::DELIVERY_PROCESS) &&
-            (!empty($shipping->sales_invoice) && ($shipping->sales_invoice->status == $shipping->sales_invoice::PAID_OFF))
-          ) {
-            $actionFinish = '<button
-            class="confirmation-delivered btn btn-default text-green"
-            style="margin-top: 10px; display: block"
-            data-target="' . url($this->route . '/' . $shipping->id . '/finish') . '"
-            data-token="' . csrf_token() . '">
-            <i class="fa fa-check-circle-o"></i> Finish
-            </button>';
-          }
+        //   if(
+        //     ($shipping->status == $shipping::DELIVERY_PROCESS) &&
+        //     (!empty($shipping->sales_invoice) && ($shipping->sales_invoice->status == $shipping->sales_invoice::PAID_OFF))
+        //   ) {
+        //     $actionFinish = '<button
+        //     class="confirmation-delivered btn btn-default text-green"
+        //     style="margin-top: 10px; display: block"
+        //     data-target="' . url($this->route . '/' . $shipping->id . '/finish') . '"
+        //     data-token="' . csrf_token() . '">
+        //     <i class="fa fa-check-circle-o"></i> Finish
+        //     </button>';
+        //   }
 
-          return \TransAction::table($this->route, $shipping, null, $shipping->log_print) . $actionFinish;
-        })
+        //   return \TransAction::table($this->route, $shipping, null, $shipping->log_print) . $actionFinish;
+        // })
         ->rawColumns(['date', 'status', 'order_number', 'shipping_method_id', 'action'])
         ->make(true);
       }
@@ -543,9 +543,13 @@ class DeliveryNoteController extends Controller
 
           DB::commit();
           return response()->json([], 204);
-        } catch (\Throwable $th) {
-          DB::rollback();
-          return response()->json(['message' => $th->getMessage()], 500);
+        } 
+        catch (\Throwable $th) {
+          DB::commit();
+          return response()->json([], 204);
+          // DB::rollback();
+          // return response()->json(['message' => $th->getMessage()], 500);
+          
         }
       }
 

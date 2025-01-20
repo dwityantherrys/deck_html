@@ -25,7 +25,7 @@
     <div class="col-md-8" style="border-right: 1px solid #d2d6de;">
       <div class="form-group @if($errors->has('name')) has-error @endif">
         <label for="">Name</label>
-        <input type="text" class="form-control" name="name" placeholder="customer / vendor name" value="{{ !empty(old('name')) ? old('name') : $model->name }}" required>
+        <input type="text" class="form-control" name="name" placeholder="vendor name" value="{{ !empty(old('name')) ? old('name') : $model->name }}" required>
         @if($errors->has('name'))
           <span class="help-block">{{ $errors->first('name') }}</span>
         @endif
@@ -33,7 +33,7 @@
 
       <div class="form-group @if($errors->has('phone')) has-error @endif">
         <label for="">Phone</label>
-        <input type="number" class="form-control" name="phone" placeholder="customer / vendor phone" value="{{ !empty(old('phone')) ? old('phone') : $model->phone }}" required>
+        <input type="number" class="form-control" name="phone" placeholder="vendor phone" value="{{ !empty(old('phone')) ? old('phone') : $model->phone }}" required>
         @if($errors->has('phone'))
           <span class="help-block">{{ $errors->first('phone') }}</span>
         @endif
@@ -41,7 +41,7 @@
 
       <div class="form-group @if($errors->has('npwp_number')) has-error @endif">
         <label for="">NPWP</label>
-        <input type="text" class="form-control" name="npwp_number" maxlength="16" placeholder="customer / vendor npwp_number" value="{{ !empty(old('npwp_number')) ? old('npwp_number') : $model->npwp_number }}" required>
+        <input type="text" class="form-control" name="npwp_number" maxlength="16" placeholder="vendor npwp_number" value="{{ !empty(old('npwp_number')) ? old('npwp_number') : $model->npwp_number }}" required>
         @if($errors->has('npwp_number'))
           <span class="help-block">{{ $errors->first('npwp_number') }}</span>
         @endif
@@ -49,7 +49,7 @@
 
       <div class="form-group @if($errors->has('email')) has-error @endif">
         <label for="">Email</label>
-        <input type="email" class="form-control" name="email" placeholder="customer / vendor email" value="{{ !empty(old('email')) ? old('email') : $model->email }}" required>
+        <input type="email" class="form-control" name="email" placeholder="vendor email" value="{{ !empty(old('email')) ? old('email') : $model->email }}" required>
         @if($errors->has('email'))
           <span class="help-block">{{ $errors->first('email') }}</span>
         @endif

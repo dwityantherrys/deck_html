@@ -1,16 +1,16 @@
 @extends('layouts.admin')
 
-@section('title', 'Customer / Vendor')
+@section('title', 'Vendor')
 
 @section('content_header')
-<h1> Customer / Vendor</h1>
+<h1>Vendor</h1>
 @stop
 
 @section('content')
 
 <div class="box box-danger">
   <div class="box-header with-border">
-      <a href="{{ url($route . '/create') }}" ><button type="button" class="btn btn-primary"><i class="fa fa-plus"></i> New Customer / Vendor</button></a>
+      <a href="{{ url($route . '/create') }}" ><button type="button" class="btn btn-primary"><i class="fa fa-plus"></i> New Vendor</button></a>
   </div>
   <!-- /.box-header -->
   <div class="box-body">

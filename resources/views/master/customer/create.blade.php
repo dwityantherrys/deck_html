@@ -1,9 +1,9 @@
 @extends('layouts.admin')
 
-@section('title', 'New Customer / Vendor')
+@section('title', 'New Vendor')
 
 @section('content_header')
-<h1> New Customer / Vendor</h1>
+<h1> New Vendor</h1>
 @stop
 
 @section('content')

@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DeliveryNote extends Model
 {
-    // use SoftDeletes;
+     use SoftDeletes;
 
+    const NOT_RELEASE = 0;
     const METHOD_IS_PICKUP = 1;
     const METHOD_IS_PICKUP_POINT = 2;
     const METHOD_IS_DELIVERY = 3;

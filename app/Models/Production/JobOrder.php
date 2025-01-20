@@ -11,7 +11,6 @@ class JobOrder extends Model
     
     const TYPE_SALES = 0; 
     const TYPE_PRODUCTION = 1;
-
     const STATUS_PENDING = 0; 
     const STATUS_PROCESS = 1; 
     const STATUS_PARTIAL = 2; 

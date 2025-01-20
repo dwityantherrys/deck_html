@@ -100,8 +100,8 @@
         <div class="form-group">
           <label>Type</label>
           <select class="form-control " name="type" id="" style="width: 100%;" tabindex="-1">
-            <option value="sparepart" @if($isActive == "sparepart") selected @endif>SPAREPART</option>
-            <option value="service" @if($isActive == "service") selected @endif>SERVICE</option>
+            <!-- <option value="sparepart" @if($isActive == "sparepart") selected @endif>SPAREPART</option> -->
+            <option value="service" @if($isActive == "service") selected @endif>Surat Perintah Kerja</option>
           </select>
         </div>
     </div>
