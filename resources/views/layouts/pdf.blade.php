@@ -104,9 +104,9 @@
                     <span class="brxsmall"></span>
                     Hotline (24hrs) +628123456789
                     <span class="brxsmall"></span>
-                    Email: csa@gmail.com
+                    Email: halo@csahome.com
                     <span class="brxsmall"></span>
-                    Website: www.csa.com
+                    Website: www.csahome.com
                 </p>    
             </td>
         </tr>

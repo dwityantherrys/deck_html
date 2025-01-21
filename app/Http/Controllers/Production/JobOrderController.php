@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 use Yajra\DataTables\Html\Builder;
 use Illuminate\Support\Arr;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 use App\Models\LogPrint;
 use App\Models\Production\JobOrder;
@@ -511,12 +512,12 @@ class JobOrderController extends Controller
         DB::beginTransaction();
 
         $jo = $this->model->where('id', $id)->with([
-            'job_order_details', 
-            'job_order_details.item_material', 
-            'pic', 
-            'vendor.profile', 
+            'job_order_details',
+            'job_order_details.item_material',
+            'pic',
+            'vendor.profile',
             'vendor.profile.default_address',
-            'vendor.profile.default_address.region_city', 
+            'vendor.profile.default_address.region_city',
             'vendor.profile.default_address.region_district'
         ])->first();
 
@@ -533,8 +534,11 @@ class JobOrderController extends Controller
 
         DB::commit();
 
-        // Kembalikan file PDF untuk dicetak
-        return \PrintFile::original($this->routeView . '.pdf', $params, 'Project-' . $jo->number);
+        // Generate PDF dengan ukuran kertas yang diinginkan
+        $pdf = Pdf::loadView($this->routeView . '.pdf', $params)
+            ->setPaper([0, 0, 419.53, 595.28]); // Ukuran setengah A4 dalam poin (A5)
+
+        return $pdf->download('Project-' . $jo->number . '.pdf');
 
     } catch (\Throwable $th) {
         DB::rollback();

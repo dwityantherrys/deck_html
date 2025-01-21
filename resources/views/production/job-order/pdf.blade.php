@@ -118,7 +118,7 @@ Surat Perintah Kerja {{ $model->number }}
         <td></td>
         <td>{{ $model->pic->name }}</td>
         <td width = "30px"></td>
-        <td>{{ $model->pic->name }}</td>
+        <td></td>
     </tr>
     <tr>
         <td></td>
