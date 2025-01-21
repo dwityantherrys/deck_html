@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 use Yajra\DataTables\Html\Builder;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 use App\Models\LogPrint;
 use App\Models\Shipping\ShippingInstruction;
@@ -577,51 +578,53 @@ class DeliveryNoteController extends Controller
       }
 
       public function print(Request $request, $id)
-      {
-        $roleUser = request()->user()->role->name;
-        $isSuperAdmin = $roleUser === 'super_admin';
+{
+    $roleUser = request()->user()->role->name;
+    $isSuperAdmin = $roleUser === 'super_admin';
 
-        try {
-          DB::beginTransaction();
-          $deliveryNote = $this->model->where('id', $id)->with(['delivery_note_details', 'job_order','job_order.job_order_details','job_order.job_order_details.item_material',
-          'job_order.pic', 'job_order.vendor.profile' , 'job_order.vendor.profile.default_address',
-          'job_order.vendor.profile.default_address.region_city', 'job_order.vendor.profile.default_address.region_district'])->first();
-          $params['model'] = $deliveryNote;
+    try {
+        DB::beginTransaction();
+        $deliveryNote = $this->model->where('id', $id)->with([
+            'delivery_note_details',
+            'job_order',
+            'job_order.job_order_details',
+            'job_order.job_order_details.item_material',
+            'job_order.pic',
+            'job_order.vendor.profile',
+            'job_order.vendor.profile.default_address',
+            'job_order.vendor.profile.default_address.region_city',
+            'job_order.vendor.profile.default_address.region_district'
+        ])->first();
 
-          // if(!empty($deliveryNote->log_print)) {
-          //   if($isSuperAdmin) return \PrintFile::original($this->routeView . '.pdf', $params, 'delivery-note-' . $deliveryNote->number);
-          //   //print with watermark
-          //   return \PrintFile::copy($this->routeView . '.pdf', $params, 'delivery-note-' . $deliveryNote->number);
-          // }
+        $params['model'] = $deliveryNote;
 
-          // //print without watermark
-          // LogPrint::create([
-          //   'transaction_code' => \Config::get('transactions.delivery_note.code'),
-          //   'transaction_number' => $deliveryNote->number,
-          //   'employee_id' => Auth()->user()->id,
-          //   'date' => now()
-          // ]);
+        // Update status to DELIVERY_FINISH
+        $deliveryNote->delivery_note_details()->update(['status' => DeliveryNoteDetail::DELIVERY_FINISH]);
+        $deliveryNote->status = $this->model::DELIVERY_PROCESS;
+        $deliveryNote->save();
 
-          $deliveryNote->delivery_note_details()->update(['status' => DeliveryNoteDetail::DELIVERY_FINISH]);
-          $deliveryNote->status = $this->model::DELIVERY_PROCESS;
-          $deliveryNote->save();
+        DB::commit();
 
-          DB::commit();
-          // return json_encode($params);
-          return \PrintFile::original($this->routeView . '.pdf', $params, 'delivery-note-' . $deliveryNote->number);
-        } catch (\Throwable $th) {
-          DB::rollback();
+        // Set the paper size to B5 (498.9 × 708.66 points)
+        $pdf = Pdf::loadView($this->routeView . '.pdf', $params)
+        ->setPaper('b5', 'landscape'); // B5 size in points
 
-          $request->session()->flash('notif', [
+        // Return the generated PDF
+        return $pdf->stream('delivery-note-' . $deliveryNote->number . '.pdf');
+    } catch (\Throwable $th) {
+        DB::rollback();
+
+        $request->session()->flash('notif', [
             'code' => 'failed ' . __FUNCTION__ . 'd',
             'message' => str_replace(".", " ", $this->routeView) . ' : ' . $th->getMessage() . $th->getLine(),
-          ]);
+        ]);
 
-          return redirect()
-          ->back()
-          ->withInput();
-        }
-      }
+        return redirect()
+            ->back()
+            ->withInput();
+    }
+}
+
 
       private function _validate ($request)
       {

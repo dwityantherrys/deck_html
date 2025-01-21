@@ -536,7 +536,7 @@ class JobOrderController extends Controller
 
         // Generate PDF dengan ukuran kertas yang diinginkan
         $pdf = Pdf::loadView($this->routeView . '.pdf', $params)
-            ->setPaper([0, 0, 419.53, 595.28]); // Ukuran setengah A4 dalam poin (A5)
+        ->setPaper('b5', 'landscape'); // Ukuran setengah A4 dalam poin (A5)
 
         return $pdf->download('Project-' . $jo->number . '.pdf');
 

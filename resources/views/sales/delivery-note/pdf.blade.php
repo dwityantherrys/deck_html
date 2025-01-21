@@ -5,7 +5,7 @@ Berita Acara Perbaikan {{ $model->number }}
 @endsection
 
 @section('page:content')
-<h1 class="title">Berita Acara Perbaikan</h1>
+<h1 class="title"  style="margin-top : -5px; margin-bottom : -20px; ">Berita Acara Perbaikan</h1>
 
 <table class="table-information" border="0">
     <tr>
@@ -22,14 +22,11 @@ Berita Acara Perbaikan {{ $model->number }}
         <td class="label">Tanggal</td>
         <td class="field-separator">:</td>
         <td>{{ $model->date_formated }}</td>
-    </tr>
-
-    <tr>
         <td class="label">Lokasi</td>
         <td class="field-separator">:</td>
         <td>{{ $model->job_order->location }}</td>
     </tr>
-      
+
     
 </table>
 
@@ -56,7 +53,7 @@ Berita Acara Perbaikan {{ $model->number }}
     <tr>
     <td width="75%">
             <span class="label">Catatan:</span>
-            <div style="border: 1px solid black; width: 75%; height: 100px">
+            <div style="border: 1px solid black; width: 75%; height: 100px; padding-left : 5px;">
             {{ $model->remark }}
             </div>
         </td>

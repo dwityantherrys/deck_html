@@ -5,9 +5,9 @@ Surat Perintah Kerja {{ $model->number }}
 @endsection
 
 @section('page:content')
-<h1 class="title">Surat Perintah Kerja</h1>
+<h1 class="title" style="margin-top : -5px; margin-bottom : -20px;">Surat Perintah Kerja</h1>
 
-<table class="table-information" border="0">
+<table class="table-information" border="0" style ="margin-top : 25px;margin-bottom : -20px; ">
     <tr>
         <td class="label">Nomor</td>
         <td class="field-separator">:</td>
@@ -22,14 +22,11 @@ Surat Perintah Kerja {{ $model->number }}
         <td class="label">Tanggal</td>
         <td class="field-separator">:</td>
         <td>{{ $model->date_formated }}</td>
-    </tr>
-
-    <tr>
         <td class="label">Lokasi</td>
         <td class="field-separator">:</td>
         <td>{{ $model->location }}</td>
     </tr>
-      
+
     
 </table>
 
@@ -105,10 +102,10 @@ Surat Perintah Kerja {{ $model->number }}
 </table>
 
 <table class="table-signment" border = "0">
-    <tr>
+    <tr rowspan = "4">
         <td width="60%">
             <span class="label">Catatan:</span>
-            <div style="border: 1px solid black; width: 80%; height: 100px">
+            <div style="border: 1px solid black; width: 80%; height: 100px; padding-left : 5px;">
             {{ $model->remark }}
             </div>
         </td>
@@ -124,7 +121,7 @@ Surat Perintah Kerja {{ $model->number }}
         <td></td>
         <td>PIC Role</td>
         <td width = "30px"></td>
-        <td>Departement</td>
+        <td>Head Departement</td>
     </tr>
     
 </table>

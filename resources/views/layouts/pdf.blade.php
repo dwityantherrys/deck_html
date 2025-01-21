@@ -91,10 +91,10 @@
 </head>
 
 <body>
-    <table border="0">
+    <table border="0" style="font-size : 12px;">
         <tr>
             <td>
-                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('/img/logo_baru.jpeg'))) }}" width="230px">
+                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('/img/logo_baru.jpeg'))) }}" width="100px">
             </td>
             <td class="text-align-right" valign="text-bottom">
                 <p class="text-align-right">
@@ -102,7 +102,7 @@
                     <span class="brxsmall"></span>
                     Jl. Daan Mogot Raya No.234, Jakarta Barat 11510
                     <span class="brxsmall"></span>
-                    Hotline (24hrs) +628123456789
+                    Hotline (24hrs) +62 21 5668801
                     <span class="brxsmall"></span>
                     Email: halo@csahome.com
                     <span class="brxsmall"></span>
