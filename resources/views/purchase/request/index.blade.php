@@ -56,7 +56,7 @@
   @slot('form')
     @component($routeView . '._form', [
         'prTypes' => $prTypes,
-        'desinationTypes' => $desinationTypes,
+        'destinationTypes' => $destinationTypes,
         'model' => $model,
         'route' => $route
     ]) @endcomponent

@@ -16,7 +16,7 @@
     <form id="form" role="form" method="post" action="{{ url($route) }}" autocomplete="off">
         @component($routeView . '._form', [
             'prTypes' => $prTypes,
-            'desinationTypes' => $desinationTypes,
+            'destinationTypes' => $destinationTypes,
             'route' => $route,
             'model' => $model
         ]) @endcomponent 

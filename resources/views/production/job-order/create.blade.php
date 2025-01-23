@@ -17,6 +17,7 @@
         @component($routeView . '._form', [
             'route' => $route,
             'joTypes' => $joTypes,
+            'joTaxTypes' => $joTaxTypes,
             'model' => $model
         ]) @endcomponent 
 

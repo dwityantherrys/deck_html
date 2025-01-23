@@ -24,7 +24,9 @@ $(document).ready(function() {
                 $('input[name="date"]').val(response.date_formated);
                 $('input[name="number"]').val(response.number);
                 $('input[name="location"]').val(response.location);
-
+                $('input[name="remark"]').val(response.remark);
+                $('input[name="tax_type"]').val(response.tax_type);
+                $('select[name="tax_type"]').trigger('change');
                 $('select[name="type"]').val(response.type);
                 $('select[name="type"]').trigger('change');
 

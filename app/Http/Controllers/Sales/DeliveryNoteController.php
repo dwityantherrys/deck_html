@@ -610,7 +610,7 @@ class DeliveryNoteController extends Controller
         ->setPaper('b5', 'landscape'); // B5 size in points
 
         // Return the generated PDF
-        return $pdf->stream('delivery-note-' . $deliveryNote->number . '.pdf');
+        return $pdf->download('delivery-note-' . $deliveryNote->number . '.pdf');
     } catch (\Throwable $th) {
         DB::rollback();
 

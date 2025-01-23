@@ -83,8 +83,10 @@ Route::group(['prefix' => 'backend'], function () {
   Route::get('/items/{id}', 'Master\Item\ItemController@searchById');
   Route::get('/items', 'Master\Item\ItemController@search');
 
-  Route::get('/items-service/{id}', 'Master\Item\ItemController@searchByIdService');
-  Route::get('/items-service', 'Master\Item\ItemController@searchService');
+  // Route::get('/items-service/{id}', 'Master\Item\ItemController@searchByIdService');
+  // Route::get('/items-service', 'Master\Item\ItemController@searchService');
+
+  Route::get('/items-service/{id?}', 'Master\Item\ItemController@searchService');
 
   Route::get('/items-sparepart/{id}', 'Master\Item\ItemController@searchByIdSparepart');
   Route::get('/items-sparepart', 'Master\Item\ItemController@searchSparepart');

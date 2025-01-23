@@ -3,12 +3,11 @@
 <?php $number = !empty(old('number')) ? old('number') : $model->number; ?>
 <?php $salesId = !empty(old('sales_id')) ? old('sales_id') : $model->sales_id; ?>
 <?php $joTypeId = !empty(old('type')) ? old('type') : (!is_null($model->type) ? $model->type : $model::TYPE_PRODUCTION); ?>
+<?php $joTaxTypeId = !empty(old('tax_type')) ? old('tax_type') : (!is_null($model->tax_type) ? $model->tax_type : $model::TAX_NONE); ?>
 <?php $warehouseId = !empty(old('warehouse_id')) ? old('warehouse_id') : $model->warehouse_id; ?>
 <?php $vendorId = !empty(old('vendor_id')) ? old('vendor_id') : $model->vendor_id; ?>
 <?php $createdBy = !empty(old('created_by')) ? old('created_by') : $model->created_by; ?>
 <?php $jobOrderDetais = !empty(old('job_order_details')) ? old('job_order_details') : $model->job_order_details ?>
-<?php $taxType = !empty(old('tax_type')) ? old('tax_type') : ($model->tax_type ? $model->tax_type : 0); ?>
-<?php $remark = !empty(old('remark')) ? old('remark') : $model->remark ?>
 
 <div class="row">
 
@@ -38,7 +37,7 @@
             @endif
         </div>
 
-        <div class="form-group @if($errors->has('type')) has-error @endif">
+        <!-- <div class="form-group @if($errors->has('type')) has-error @endif">
             <label>Kategori Perbaikan</label>
             <select class="form-control" name="type" style="width: 100%;" tabindex="-1">
                 <option value="">Pilih Kategori Perbaikan</option>
@@ -49,9 +48,20 @@
             @if($errors->has('type'))
             <span class="help-block">{{ $errors->first('type') }}</span>
             @endif
+        </div> -->
+
+        <div class="form-group ">
+            <label>Kategori Perbaikan</label>
+            <select class="form-control" name="type" style="width: 100%;" tabindex="-1">
+                <option value="">Pilih Kategori Perbaikan</option>
+                @foreach($joTypes as $typeId => $type)
+                <option value="{{ $typeId }}" @if($joTypeId==$typeId) selected @endif>{{ $type['label'] }}</option>
+                @endforeach
+            </select>
+            
         </div>
 
-        <div class="form-group @if($errors->has('remark')) has-error @endif">
+        <div class="form-group @if($errors->has('location')) has-error @endif">
             <label for="">Lokasi</label>
             <input type="text" class="form-control" name="location" placeholder="location"
                 value="{{ !empty(old('location')) ? old('location') : $model->location }}">
@@ -96,16 +106,16 @@
         </div>
 
 
-        <div class="form-group @if($errors->has('tax_type')) has-error @endif">
+
+        <div class="form-group ">
             <label>Pilih Pajak</label>
-            <select class="form-control " name="tax_type" id="" style="width: 100%;" tabindex="-1">
-                <option value="0" @if($taxType=="0" ) selected @endif>None</option>
-                <option value="1" @if($taxType=="1" ) selected @endif>PPn 11%</option>
-                <!-- <option value="2" @if($taxType=="2" ) selected @endif>PPn 11% Include</option> -->
+            <select class="form-control" name="tax_type" style="width: 100%;" tabindex="-1">
+                <option value="">Pilih Tax</option>
+                @foreach($joTaxTypes as $TaxtypeId => $tax_type)
+                <option value="{{ $TaxtypeId }}" @if($joTaxTypeId==$TaxtypeId) selected @endif>{{ $tax_type['label'] }}</option>
+                @endforeach
             </select>
-            @if($errors->has('tax_type'))
-            <span class="help-block">{{ $errors->first('tax_type') }}</span>
-            @endif
+    
         </div>
 
     </div>
@@ -168,7 +178,7 @@
                         @endif
                     </th>
                     <th>
-                        @{{ getTotalQuantity() | formatRupiah }}
+                    <label for="">@{{ getTotalQuantity() | formatRupiah }}</label>
                     </th>
                     <th>
                         <label for="">@{{ getTotalPrice() | formatRupiah }}</label>
@@ -270,7 +280,7 @@ $(document).ready(function() {
                     `{{ $baseBeApiUrl . '/employee' }}`, response.created_by);
                 // select2AjaxHandler('select[name="vendor_id"]',
                 //     `{{ $baseBeApiUrl . '/customer' }}`, response.vendor_id);
-                $('input[name="remark"]').val(response.remark);
+                //$('input[name="remark"]').val(response.remark);
                 // app.salesOrders = response.sales_details
 
                 $(`a[href="#collapseListOrders"]`).removeClass('disabled')
@@ -569,9 +579,8 @@ var app = new Vue({
             var resultWithTaxInclude = totalAmountWithDiscount - ((11 / 100) * totalAmountWithDiscount);
             if (vm.tax_type == 1) {
                 return resultWithTax;
-            } else if (vm.tax_type == 2) {
-                return totalAmountWithDiscount - resultWithTaxInclude;
-            } else {
+            } 
+            else {
                 return 0;
             }
 
@@ -582,13 +591,8 @@ var app = new Vue({
                 var totalAmountWithDiscount = this.getTotalAmount()
                 var resultWithTax = (totalAmountWithDiscount * (11 / 100))
                 return (this.getTotalAmount()) + resultWithTax
-            } else if (this.tax_type == 2) {
-                var totalAmountWithDiscount = this.getTotalAmount()
-                var resultWithTaxInclude = totalAmountWithDiscount - ((11 / 100) * totalAmountWithDiscount);
-                var ppnnotinclude = (11 / 111) * totalAmountWithDiscount;
-
-                return resultWithTaxInclude
-            } else {
+            } 
+             else {
                 return this.getTotalAmount()
             }
         },
@@ -600,8 +604,9 @@ var app = new Vue({
                 url: `${baseBeApiUrl}/items-service/${itemId}`,
                 type: "GET",
                 success: function(response) {
-                    vm.elements[i].quantity = 1
+                    // vm.elements[i].quantity = 1
                     vm.elements[i].item_name = response.name
+                    vm.elements[i].quantity = response.quantity
                     vm.elements[i].price = response.price
 
                 },

@@ -18,11 +18,8 @@
       <thead>
         <tr>
           <th>No</th>
-          <th>Image</th>
           <th>Name</th>
           <th>Phone</th>
-          <th>Bank Name</th>
-          <th>Bank Account</th>
           <th>Active ?</th>
           <th>Action</th>
         </tr>
@@ -36,8 +33,8 @@
           </td>
           <td>{{ $profile->name }}</td>
           <td>{{ $profile->phone }}</td>
-          <td>{{ $profile->bank_name }}</td>
-          <td>{{ $profile->bank_account }}</td>
+          <!-- <td>{{ $profile->bank_name }}</td>
+          <td>{{ $profile->bank_account }}</td> -->
           <td>
             @if($profile->is_active)
             <small class="label bg-green">Yes</small>

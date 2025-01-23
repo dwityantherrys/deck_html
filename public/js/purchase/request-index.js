@@ -23,6 +23,10 @@ $(document).ready(function() {
                 $('input[name="request_date"]').val(response.request_date_formated);
                 $('input[name="request_number"]').val(response.request_number);
                 $('input[name="pat_number"]').val(response.pat_number);
+                $('input[name="remark"]').val(response.remark);
+              
+                $('input[name="tax_type"]').val(response.tax_type);
+                $('select[name="tax_type"]').trigger('change');
     
                 select2AjaxHandler('select[name="sales_id"]', `${baseBeApiUrl}/sales/order`, response.sales_id);
                 select2AjaxHandler('select[name="request_by"]', `${baseBeApiUrl}/employee`, response.request_by);

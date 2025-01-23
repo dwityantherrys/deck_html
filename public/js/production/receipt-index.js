@@ -25,6 +25,7 @@ $(".has-ajax-form").click(function() {
             $('select[name="warehouse_id"]').val(response.warehouse_id);
             $('select[name="factory_id"]').val(response.factory_id);
             $('select[name="warehouse_id"]').trigger('change');
+            
 
             select2AjaxHandler('select[name="good_issued_id"]', `${baseBeApiUrl}/production/good-issued`, response.good_issued_id);
             select2AjaxHandler('select[name="created_by"]', `${baseBeApiUrl}/customer`, response.created_by, true);

@@ -42,7 +42,7 @@ class PurchaseRequestController extends Controller
 
         ];
 
-        $this->params['desinationTypes'] = [
+        $this->params['destinationTypes'] = [
             Purchase::HEAD => ['label' => 'PT CSA', 'label-color' => 'green'],
             Purchase::BRANCH => ['label' => 'KANTOR CABANG', 'label-color' => 'green']
 

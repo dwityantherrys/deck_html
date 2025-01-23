@@ -19,6 +19,7 @@
         <form id="form" role="form" method="post" action="{{ url($route . '/' . $model->id) }}" autocomplete="off">
             @component($routeView . '._form', [
             'joTypes' => $joTypes,
+            'joTaxTypes' => $joTaxTypes,
             'route' => $route,
             'model' => $model
             ]) @endcomponent

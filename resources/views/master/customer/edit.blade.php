@@ -34,8 +34,7 @@
     <div class="tab-content" style="height: 440px; overflow-x: hidden; overflow-y: auto;">
         @component($routeView . '._form', [
             'routeView' => $routeView,
-            'tempoTypes' => $tempoTypes,
-            'paymentMethodOptions' => $paymentMethodOptions,
+           
             'model' => $model,
             'region_type' => $region_type
         ]) @endcomponent 

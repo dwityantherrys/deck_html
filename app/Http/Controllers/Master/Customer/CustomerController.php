@@ -490,9 +490,9 @@ class CustomerController extends Controller
 
         return Validator::make($request, [
             'name' => ['required'],
-            'email' => ['required', 'unique:users,email' . $ignoredUserId, 'email'],
-            'phone' => ['required', 'unique:profiles,phone' . $ignoredProfileId, 'numeric', 'digits_between:7,12'],
-            'identity_number' => ['nullable', 'unique:profiles,identity_number' . $ignoredProfileId, 'numeric', 'digits:16'],
+            // 'email' => ['required', 'unique:users,email' . $ignoredUserId, 'email'],
+            // 'phone' => ['required', 'unique:profiles,phone' . $ignoredProfileId, 'numeric', 'digits_between:7,12'],
+            // 'identity_number' => ['nullable', 'unique:profiles,identity_number' . $ignoredProfileId, 'numeric', 'digits:16'],
         ]);
     }
 }

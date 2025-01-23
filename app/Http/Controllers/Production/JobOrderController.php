@@ -41,7 +41,11 @@ class JobOrderController extends Controller
         JobOrder::TYPE_ELECTRONIC => ['label' => 'Peralatan Elektronik Gedung', 'label-color' => 'grey'],
         JobOrder::TYPE_CABLE => ['label' => 'Kabel-Kabel', 'label-color' => 'grey'],
         JobOrder::TYPE_OTHERS => ['label' => 'Lain-Lain', 'label-color' => 'grey'],
-        
+    
+      ];
+      $this->params['joTaxTypes'] = [
+        JobOrder::TAX_NONE => ['label' => 'None' ,'label-color' => 'grey'],
+        JobOrder::TAX_PPN => ['label' => 'PPN 11%','label-color' => 'grey'],
       ];
     }
 
@@ -88,6 +92,9 @@ class JobOrderController extends Controller
         foreach ($result->job_order_details as $joDetail) {
             $joDetail->item_material_id = $joDetail->item_material_id;
             $joDetail->length_options = [];
+
+
+            
         }
         
         $result->name = $result->number;
@@ -166,7 +173,7 @@ class JobOrderController extends Controller
      */
     public function index(Request $request)
     {        
-        $joTypes = $this->params['joTypes'];
+
         $joStatus = [
             $this->model::STATUS_PENDING => ['label' => 'pending', 'label-color' => 'yellow'],
             $this->model::STATUS_PROCESS => ['label' => 'on process', 'label-color' => 'orange'],
@@ -563,6 +570,8 @@ class JobOrderController extends Controller
             'sales_id' => ['required_if:type,' . $this->model::TYPE_SALES],
             'created_by' => ['required'],
             'type' => ['required'],
+            'tax_type' => ['required'],
+            // 'remark' => ['required'],
             'number' => ['required', 'unique:job_orders,number' . $ignoredId],
             'date' => ['required'],
             'job_order_details.*.quantity' => ['required']

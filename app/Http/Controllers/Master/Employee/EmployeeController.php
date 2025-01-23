@@ -293,7 +293,7 @@ class EmployeeController extends Controller
         return Validator::make($request, [
             'name' => ['required'],
             'role_id' => ['required'],
-            'email' => ['required', 'unique:users,email' . $ignoredUserId, 'email'],
+            // 'email' => ['required', 'unique:users,email' . $ignoredUserId, 'email'],
         ]);
     }
 }

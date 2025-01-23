@@ -26,7 +26,12 @@ $(".has-ajax-form").click(function() {
             $('input[name="request_number"]').val(response.request_number);
             select2AjaxHandler('select[name="vendor_id"]', `${baseBeApiUrl}/customer`, response.vendor_id);
             select2AjaxHandler('select[name="warehouse_id"]', `${baseBeApiUrl}/warehouse`, response.warehouse_id);
+            $('input[name="remark"]').val(response.remark);
+              
+            $('input[name="tax_type"]').val(response.tax_type);
+            $('select[name="tax_type"]').trigger('change');
             app.elements = response.purchase_details
+           
 
             // set params confirmation print
             var printInformation = response.order_log_print ? 'di print oleh ' + response.order_log_print.employee.name + ' pada tanggal ' + response.order_log_print.date_formated : ''

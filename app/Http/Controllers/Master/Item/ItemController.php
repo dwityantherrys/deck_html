@@ -109,46 +109,51 @@ class ItemController extends Controller
     }
 
 
-    public function searchService(Request $request)
-{
-    $where = "1=1";
-    $response = [];
-
-    if ($request->searchKey) {
-        $where .= " and name like '%{$request->searchKey}%'";
-    }
-
-    $where .= " and type = 'service'";
-    
-
-    try {
-        $results = $this->model::whereRaw($where)
-                   ->get()
-                   ->makeHidden(['created_at', 'updated_at']);
-
-        // Tambahkan modifikasi jika diperlukan, jika tidak hapus blok ini
-        foreach ($results as $key => $value) {
-            // Contoh modifikasi: ubah menjadi huruf besar
-            $value->name = strtoupper($value->name);
-        }
-
-        $response['results'] = $results;
-    } catch (\Exception $e) {
-        return response(['message' => $e->getMessage()], 500);
-    }
-
-    return response()->json($response, 200);
-}
-
-    public function searchByIdService($name)
+    public function searchService(Request $request, $id = null)
     {
-        $result = $this->model
-        ->where('id', $name)
-        ->where('type', 'service') // Filter by type 'sparepart'
-        ->first();
-
-        return response()->json($result, 200);
+        $where = "1=1";
+    
+        // Tambahkan kondisi pencarian berdasarkan ID jika diberikan
+        if ($id) {
+            $where .= " and id = '{$id}'";
+        }
+    
+        // Tambahkan kondisi pencarian berdasarkan searchKey jika ada dalam request
+        if ($request->has('searchKey')) {
+            $where .= " and name like '%{$request->searchKey}%'";
+        }
+    
+        // Tambahkan kondisi untuk tipe 'service'
+        $where .= " and type = 'service'";
+    
+        try {
+            $query = $this->model::whereRaw($where);
+    
+            // Jika pencarian berdasarkan ID, ambil satu data
+            if ($id) {
+                $result = $query->first();
+    
+                if (!$result) {
+                    return response()->json(['message' => 'Data not found'], 404);
+                }
+    
+                return response()->json($result, 200);
+            }
+    
+            // Jika tidak, ambil semua data yang sesuai
+            $results = $query->get()->makeHidden(['created_at', 'updated_at']);
+    
+            // Modifikasi data jika diperlukan
+            foreach ($results as $key => $value) {
+                $value->name = strtoupper($value->name);
+            }
+    
+            return response()->json(['results' => $results], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
     }
+    
      
     public function index()
     {

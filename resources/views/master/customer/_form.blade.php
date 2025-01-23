@@ -4,9 +4,6 @@
 <?php $regionCityId = !empty(old('region_city_id')) ? old('region_city_id') : $model->region_id; ?>
 <?php $isActive = !empty(old('is_active')) ? old('is_active') : ($model->is_active ? $model->is_active : 1); ?>
 <?php $companyId = !empty(old('company_id')) ? old('company_id') : $model->company_id; ?>
-<?php $tempoSelected = !empty(old('tempo_type')) ? old('tempo_type') : $model->tempo_type; ?>
-<?php $paymentMethod = !empty(old('payment_method_id')) ? old('payment_method_id') : $model->payment_method_id; ?>
-<?php $isAllowedPaylater = !empty(old('is_allowed_paylater')) ? old('is_allowed_paylater') : $model->is_allowed_paylater; ?>
 
 <div class="tab-pane" id="company">
   <div class="form-group">
@@ -21,7 +18,7 @@
 </div>
 
 <div class="active tab-pane" id="profile">
-  <div class="row">
+  
     <div class="col-md-8" style="border-right: 1px solid #d2d6de;">
       <div class="form-group @if($errors->has('name')) has-error @endif">
         <label for="">Name</label>
@@ -33,7 +30,7 @@
 
       <div class="form-group @if($errors->has('phone')) has-error @endif">
         <label for="">Phone</label>
-        <input type="number" class="form-control" name="phone" placeholder="vendor phone" value="{{ !empty(old('phone')) ? old('phone') : $model->phone }}" required>
+        <input type="number" class="form-control" name="phone" placeholder="vendor phone" value="{{ !empty(old('phone')) ? old('phone') : $model->phone }}" >
         @if($errors->has('phone'))
           <span class="help-block">{{ $errors->first('phone') }}</span>
         @endif
@@ -41,7 +38,7 @@
 
       <div class="form-group @if($errors->has('npwp_number')) has-error @endif">
         <label for="">NPWP</label>
-        <input type="text" class="form-control" name="npwp_number" maxlength="16" placeholder="vendor npwp_number" value="{{ !empty(old('npwp_number')) ? old('npwp_number') : $model->npwp_number }}" required>
+        <input type="text" class="form-control" name="npwp_number" maxlength="16" placeholder="vendor npwp_number" value="{{ !empty(old('npwp_number')) ? old('npwp_number') : $model->npwp_number }}" >
         @if($errors->has('npwp_number'))
           <span class="help-block">{{ $errors->first('npwp_number') }}</span>
         @endif
@@ -49,7 +46,7 @@
 
       <div class="form-group @if($errors->has('email')) has-error @endif">
         <label for="">Email</label>
-        <input type="email" class="form-control" name="email" placeholder="vendor email" value="{{ !empty(old('email')) ? old('email') : $model->email }}" required>
+        <input type="email" class="form-control" name="email" placeholder="vendor email" value="{{ !empty(old('email')) ? old('email') : $model->email }}" >
         @if($errors->has('email'))
           <span class="help-block">{{ $errors->first('email') }}</span>
         @endif
@@ -57,7 +54,7 @@
 
       <div class="form-group @if($errors->has('bank_name')) has-error @endif">
         <label for="">Bank Name</label>
-        <input type="text" class="form-control" name="bank_name" placeholder="Bank Name" value="{{ !empty(old('bank_name')) ? old('bank_name') : $model->bank_name }}" required>
+        <input type="text" class="form-control" name="bank_name" placeholder="Bank Name" value="{{ !empty(old('bank_name')) ? old('bank_name') : $model->bank_name }}" >
         @if($errors->has('bank_name'))
           <span class="help-block">{{ $errors->first('bank_name') }}</span>
         @endif
@@ -65,18 +62,18 @@
 
       <div class="form-group @if($errors->has('bank_account')) has-error @endif">
         <label for="">Bank Account</label>
-        <input type="number" class="form-control" name="bank_account" placeholder="Bank Account" value="{{ !empty(old('bank_account')) ? old('bank_account') : $model->bank_account }}" required>
+        <input type="number" class="form-control" name="bank_account" placeholder="Bank Account" value="{{ !empty(old('bank_account')) ? old('bank_account') : $model->bank_account }}" >
         @if($errors->has('bank_account'))
           <span class="help-block">{{ $errors->first('bank_account') }}</span>
         @endif
       </div>
       
 
-      <div class="form-group">
+      <!-- <div class="form-group">
         <label>Image</label>
         <span class="show-image-preview pull-right" data-url="{{ $model->image_url }}" @if($model->image) style="display:block" @endif>image preview</span>
-        <input type="file" class="has-image-preview form-control" name="image" value="" required>
-      </div>
+        <input type="file" class="has-image-preview form-control" name="image" value="" >
+      </div> -->
 
       <div class="form-group">
         <label>Active</label>
@@ -87,13 +84,13 @@
       </div>
     </div>
 
-    <div class="col-md-4" style="height: 100%;">
+    <!-- <div class="col-md-4" style="height: 100%;">
       <label>Image Preview</label>
       <div style="margin-top: 1rem;">
         <img class="image-preview" src="{{ $model->image_url ? $model->image_url : asset('img/no-image.png') }}" width="100%" alt="image preview">
       </div>
-    </div>
-  </div>
+    </div> -->
+  
 </div>
 
 <div class="tab-pane" id="address">

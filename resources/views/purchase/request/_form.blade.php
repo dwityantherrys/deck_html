@@ -10,7 +10,6 @@
 <?php $branchId = !empty(old('branch_id')) ? old('branch_id') : $model->branch_id; ?>
 <?php $purchaseDetails = !empty(old('purchase_details')) ? old('purchase_details') : $model->purchase_details ?>
 <?php $itemsName = !empty(old('item_name')) ? old('item_name') : $model->item_name; ?>
-<?php $patNumber = !empty(old('remark')) ? old('remark') : $model->remark; ?>
 
 <div class="row">
 
@@ -109,7 +108,7 @@
             <label>Pengiriman</label>
             <select class="form-control" name="destination" style="width: 100%;" tabindex="-1">
                 <option value="">Pilih Pengiriman</option>
-                @foreach($desinationTypes as $typeId => $type)
+                @foreach($destinationTypes as $typeId => $type)
                 <option value="{{ $typeId }}" @if($destinationTypeId==$typeId) selected @endif>{{ $type['label'] }}
                 </option>
                 @endforeach
